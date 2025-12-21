@@ -54,6 +54,8 @@ cd eep-annual-event-app
 npm install
 ```
 
+**Note:** This project uses `legacy-peer-deps` due to dependency conflicts between React Native packages. This is configured in the `.npmrc` file and is normal for React Native projects.
+
 ### 3. Firebase Configuration
 
 1. Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
