@@ -1,0 +1,22 @@
+{
+  "short_name": "EEP Event",
+  "name": "EEP Annual Event",
+  "description": "Event management application for the Foundation for Economic Education and Peace annual event",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1E3A8A",
+  "background_color": "#ffffff",
+  "orientation": "portrait"
+}
