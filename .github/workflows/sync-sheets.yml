@@ -28,3 +28,35 @@ jobs:
           SCHEDULE_CSV_URL: ${{ secrets.SCHEDULE_CSV_URL }}
           SPEAKERS_CSV_URL: ${{ secrets.SPEAKERS_CSV_URL }}
         run: npm run sync:sheets
+
+      - name: Notify on Success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: '✅ Schedule sync completed successfully',
+              attachments: [{
+                color: 'good',
+                text: `Database updated at ${new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})}`
+              }]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        continue-on-error: true
+
+      - name: Notify on Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: '❌ Schedule sync failed',
+              attachments: [{
+                color: 'danger',
+                text: 'Check logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              }]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        continue-on-error: true
