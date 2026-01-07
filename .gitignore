@@ -1,6 +1,11 @@
 # OSX
 .DS_Store
 
+# Secrets & Environment
+serviceAccountKey.json
+.env
+.env.local
+
 # Xcode
 build/
 *.pbxuser
