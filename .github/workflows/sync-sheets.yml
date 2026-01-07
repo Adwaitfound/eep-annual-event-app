@@ -41,10 +41,18 @@ jobs:
             json_to="$json_to\"$email_trimmed\"," 
           done
           json_to="${json_to%,}]"
+          cat > payload.json <<EOF
+          {
+            "from": "notifications@thelostproject.in",
+            "to": $json_to,
+            "subject": "✅ Event Schedule Synced Successfully",
+            "html": "<h2>✅ Schedule Sync Success</h2><p>Database updated successfully at 8:00 AM IST</p><p>The latest schedule and speakers have been synced from Google Sheets to Firestore.</p>"
+          }
+          EOF
           curl -X POST "https://api.resend.com/emails" \
             -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{\n              \"from\": \"notifications@thelostproject.in\",\n              \"to\": $json_to,\n              \"subject\": \"✅ Event Schedule Synced Successfully\",\n              \"html\": \"<h2>✅ Schedule Sync Success</h2><p>Database updated successfully at 8:00 AM IST</p><p>The latest schedule and speakers have been synced from Google Sheets to Firestore.</p>\"\n            }"
+            --data-binary @payload.json
         continue-on-error: true
 
       - name: Send Failure Email via Resend
@@ -59,8 +67,16 @@ jobs:
             json_to="$json_to\"$email_trimmed\"," 
           done
           json_to="${json_to%,}]"
+          cat > payload.json <<EOF
+          {
+            "from": "notifications@thelostproject.in",
+            "to": $json_to,
+            "subject": "❌ Event Schedule Sync Failed",
+            "html": "<h2>❌ Sync Failed</h2><p><a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">Check logs</a></p>"
+          }
+          EOF
           curl -X POST "https://api.resend.com/emails" \
             -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{\n              \"from\": \"notifications@thelostproject.in\",\n              \"to\": $json_to,\n              \"subject\": \"❌ Event Schedule Sync Failed\",\n              \"html\": \"<h2>❌ Sync Failed</h2><p><a href=\\\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\\\">Check logs</a></p>\"\n            }"
+            --data-binary @payload.json
         continue-on-error: true
