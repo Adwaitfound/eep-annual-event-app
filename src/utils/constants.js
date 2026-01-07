@@ -1,33 +1,17 @@
-// App constants
-export const COLORS = {
-  primary: '#1E3A8A', // Deep blue - from foundationeep.org theme
-  secondary: '#3B82F6', // Bright blue
-  accent: '#10B981', // Green
-  background: '#F9FAFB',
-  surface: '#FFFFFF',
-  error: '#EF4444',
-  text: '#111827',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  success: '#10B981',
-  warning: '#F59E0B',
-  info: '#3B82F6',
-};
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
-export const DARK_COLORS = {
-  primary: '#3B82F6',
-  secondary: '#60A5FA',
-  accent: '#34D399',
-  background: '#111827',
-  surface: '#1F2937',
-  error: '#F87171',
-  text: '#F9FAFB',
-  textSecondary: '#9CA3AF',
-  border: '#374151',
-  success: '#34D399',
-  warning: '#FBBF24',
-  info: '#60A5FA',
-};
+export const COLLECTIONS = {
+  USERS: 'users',
+  SCHEDULE: 'schedule',
+  SPEAKERS: 'speakers',
+  EVENT: 'event'
+}
+
+export const ERROR_MESSAGES = {
+  AUTH_FAILED: 'Authentication failed',
+  NETWORK_ERROR: 'Network connection error',
+  UNKNOWN_ERROR: 'An unknown error occurred'
+}
 
 export const SPACING = {
   xs: 4,

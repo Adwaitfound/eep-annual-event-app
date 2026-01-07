@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
  */
 exports.updateSpeakerVoteCount = functions.firestore
   .document('votes/{voteId}')
-  .onWrite(async (change, context) => {
+  .onWrite(async (change) => {
     const voteData = change.after.exists ? change.after.data() : null;
     const previousVoteData = change.before.exists ? change.before.data() : null;
 

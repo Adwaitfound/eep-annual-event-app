@@ -7,7 +7,7 @@ const admin = require('firebase-admin');
  */
 exports.sendSessionReminder = functions.pubsub
   .schedule('every 5 minutes')
-  .onRun(async (context) => {
+  .onRun(async () => {
     const now = admin.firestore.Timestamp.now();
     const reminderTime = new Date(now.toDate().getTime() + 15 * 60000); // 15 minutes from now
 
@@ -72,7 +72,7 @@ exports.sendSessionReminder = functions.pubsub
  */
 exports.sendAnnouncementNotification = functions.firestore
   .document('announcements/{announcementId}')
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap) => {
     const announcement = snap.data();
 
     try {

@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
  */
 exports.onNewMessage = functions.firestore
   .document('messages/{messageId}')
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap) => {
     const message = snap.data();
 
     try {
@@ -64,7 +64,7 @@ exports.onNewMessage = functions.firestore
  */
 exports.onConnectionRequest = functions.firestore
   .document('connections/{connectionId}')
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap) => {
     const connection = snap.data();
 
     // Only send notification for pending requests

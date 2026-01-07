@@ -1,4 +1,5 @@
-const CACHE_NAME = 'eep-event-v1';
+// Bump cache name to force fresh assets after UI changes.
+const CACHE_NAME = 'eep-event-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -14,6 +15,7 @@ self.addEventListener('install', (event) => {
         return cache.addAll(urlsToCache);
       })
   );
+  self.skipWaiting();
 });
 
 // Fetch event - serve from cache when offline
@@ -63,4 +65,5 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  self.clients.claim();
 });

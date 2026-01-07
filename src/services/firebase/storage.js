@@ -4,49 +4,54 @@ import {
   uploadBytesResumable,
   getDownloadURL,
   deleteObject,
-} from 'firebase/storage';
-import { storage } from './config';
+} from 'firebase/storage'
+import { storage } from './config'
 
-/**
- * Upload a file to Firebase Storage
- * @param {string} path - Storage path
- * @param {Blob|File} file - File to upload
- * @param {Function} onProgress - Progress callback (optional)
- * @returns {Promise<string>} Download URL
- */
 export const uploadFile = async (path, file, onProgress = null) => {
   try {
-    const storageRef = ref(storage, path);
+    const storageRef = ref(storage, path)
     
     if (onProgress) {
-      // Upload with progress tracking
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const uploadTask = uploadBytesResumable(storageRef, file)
       
       return new Promise((resolve, reject) => {
         uploadTask.on(
           'state_changed',
           (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            onProgress(progress);
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            onProgress(progress)
           },
           (error) => {
-            reject(error);
+            reject(error)
           },
           async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadURL);
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+            resolve(downloadURL)
           }
-        );
-      });
+        )
+      })
     } else {
-      // Simple upload without progress tracking
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-      return downloadURL;
+      await uploadBytes(storageRef, file)
+      const downloadURL = await getDownloadURL(storageRef)
+      return downloadURL
     }
   } catch (error) {
-    console.error('Upload file error:', error);
-    throw error;
+    console.error('Upload file error:', error)
+    throw error
+  }
+}
+
+export const uploadProfilePicture = async (userId, file) => {
+  return uploadFile(`profile-pictures/${userId}`, file)
+}
+
+export const deleteFile = async (path) => {
+  try {
+    const fileRef = ref(storage, path)
+    await deleteObject(fileRef)
+  } catch (error) {
+    console.error('Delete file error:', error)
+    throw error
   }
 };
 
