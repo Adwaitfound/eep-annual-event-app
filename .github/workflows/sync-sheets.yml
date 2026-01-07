@@ -29,34 +29,38 @@ jobs:
           SPEAKERS_CSV_URL: ${{ secrets.SPEAKERS_CSV_URL }}
         run: npm run sync:sheets
 
-      - name: Notify on Success
+      - name: Send Success Email via Resend
         if: success()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          custom_payload: |
-            {
-              text: '✅ Schedule sync completed successfully',
-              attachments: [{
-                color: 'good',
-                text: `Database updated at ${new Date().toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})}`
-              }]
-            }
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          TO_LIST="${{ secrets.NOTIFICATION_EMAILS }}"
+          IFS=',' read -r -a RECIPS <<< "$TO_LIST"
+          json_to="["
+          for email in "${RECIPS[@]}"; do
+            email_trimmed="$(echo "$email" | xargs)"
+            [ -z "$email_trimmed" ] && continue
+            json_to="$json_to\"$email_trimmed\"," 
+          done
+          json_to="${json_to%,}]"
+          curl -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{\n              \"from\": \"notifications@thelostproject.in\",\n              \"to\": $json_to,\n              \"subject\": \"✅ Event Schedule Synced Successfully\",\n              \"html\": \"<h2>✅ Schedule Sync Success</h2><p>Database updated successfully at 8:00 AM IST</p><p>The latest schedule and speakers have been synced from Google Sheets to Firestore.</p>\"\n            }"
         continue-on-error: true
 
-      - name: Notify on Failure
+      - name: Send Failure Email via Resend
         if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          custom_payload: |
-            {
-              text: '❌ Schedule sync failed',
-              attachments: [{
-                color: 'danger',
-                text: 'Check logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-              }]
-            }
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          TO_LIST="${{ secrets.NOTIFICATION_EMAILS }}"
+          IFS=',' read -r -a RECIPS <<< "$TO_LIST"
+          json_to="["
+          for email in "${RECIPS[@]}"; do
+            email_trimmed="$(echo "$email" | xargs)"
+            [ -z "$email_trimmed" ] && continue
+            json_to="$json_to\"$email_trimmed\"," 
+          done
+          json_to="${json_to%,}]"
+          curl -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{\n              \"from\": \"notifications@thelostproject.in\",\n              \"to\": $json_to,\n              \"subject\": \"❌ Event Schedule Sync Failed\",\n              \"html\": \"<h2>❌ Sync Failed</h2><p><a href=\\\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\\\">Check logs</a></p>\"\n            }"
         continue-on-error: true
